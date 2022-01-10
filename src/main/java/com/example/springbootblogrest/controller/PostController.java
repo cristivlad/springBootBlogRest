@@ -1,12 +1,16 @@
 package com.example.springbootblogrest.controller;
 
 import com.example.springbootblogrest.dto.PostDto;
+import com.example.springbootblogrest.dto.PostResponse;
+import com.example.springbootblogrest.entity.Post;
 import com.example.springbootblogrest.service.PostService;
+import com.example.springbootblogrest.utils.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.springbootblogrest.utils.Constants.*;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -25,8 +29,11 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> getAllPosts() {
-        return postService.getAllPosts();
+    public PostResponse getAllPosts(@RequestParam(value = "pageNo", defaultValue = DEFAULT_PAGE_NO, required = false) int pageNo,
+                                    @RequestParam(value = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
+                                    @RequestParam(value = "sortBy", defaultValue = DEFAULT_SORT_BY, required = false) String sortBy,
+                                    @RequestParam(value = "sortDir", defaultValue = DEFAULT_SORT_DIR, required = false) String sortDir){
+        return postService.getAllPosts(pageNo, pageSize, sortBy, sortDir);
     }
 
     @GetMapping("/{id}")
