@@ -8,6 +8,8 @@ import com.example.springbootblogrest.exception.ResourceNotFoundException;
 import com.example.springbootblogrest.repository.CommentRepository;
 import com.example.springbootblogrest.repository.PostRepository;
 import com.example.springbootblogrest.service.CommentService;
+import org.modelmapper.ModelMapper;
+import org.springframework.boot.Banner;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,12 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
     private PostRepository postRepository;
+    private ModelMapper modelMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -90,22 +94,14 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
-    private CommentDto mapToDto(Comment savedComment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(savedComment.getId());
-        commentDto.setEmail(savedComment.getEmail());
-        commentDto.setName(savedComment.getName());
-        commentDto.setMessage(savedComment.getMessage());
+    private CommentDto mapToDto(Comment comment) {
+        CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
 
         return commentDto;
     }
 
     private Comment mapToEntity(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setMessage(commentDto.getMessage());
+        Comment comment = modelMapper.map(commentDto, Comment.class);
 
         return comment;
     }
