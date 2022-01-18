@@ -2,13 +2,11 @@ package com.example.springbootblogrest.controller;
 
 import com.example.springbootblogrest.dto.PostDto;
 import com.example.springbootblogrest.dto.PostResponse;
-import com.example.springbootblogrest.entity.Post;
 import com.example.springbootblogrest.service.PostService;
-import com.example.springbootblogrest.utils.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import static com.example.springbootblogrest.utils.Constants.*;
 import static org.springframework.http.HttpStatus.*;
@@ -17,14 +15,14 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/posts")
 public class PostController {
 
-    private PostService postService;
+    private final PostService postService;
 
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), CREATED);
     }
 
@@ -42,7 +40,7 @@ public class PostController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable(name="id") long id, @RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> updatePost(@PathVariable(name="id") long id, @Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.updatePostById(id, postDto), OK);
     }
 
