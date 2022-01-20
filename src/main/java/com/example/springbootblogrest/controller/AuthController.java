@@ -9,6 +9,8 @@ import com.example.springbootblogrest.exception.ResourceNotFoundException;
 import com.example.springbootblogrest.repository.RoleRepository;
 import com.example.springbootblogrest.repository.UserRepository;
 import com.example.springbootblogrest.security.JwtTokenProvider;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +28,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
+@Api(value = "Authorization Controller exposes signing in and signup REST Api's")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -45,6 +48,7 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @ApiOperation(value = "Rest api to signin a user to Blog App")
     @PostMapping("/signin")
     public ResponseEntity<JWTAuthResponse> authenticateUser(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
@@ -55,13 +59,14 @@ public class AuthController {
         return ResponseEntity.ok(new JWTAuthResponse(token));
     }
 
+    @ApiOperation(value = "Rest api to register a user to Blog App")
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody SignUpDto signUpDto) {
-        if(userRepository.existsByUsername(signUpDto.getUsername())) {
+        if(Boolean.TRUE.equals(userRepository.existsByUsername(signUpDto.getUsername()))) {
             return new ResponseEntity<>("Username is already taken", BAD_REQUEST);
         }
 
-        if(userRepository.existsByEmail(signUpDto.getEmail())) {
+        if(Boolean.TRUE.equals(userRepository.existsByEmail(signUpDto.getEmail()))) {
             return new ResponseEntity<>("Email already exists", BAD_REQUEST);
         }
 
